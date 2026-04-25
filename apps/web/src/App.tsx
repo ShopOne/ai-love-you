@@ -103,7 +103,7 @@ export default function App() {
 
     if (!token) {
       setStatus("error");
-      setMessage("人間判定のため、本物の reCAPTCHA を先に完了してください。");
+      setMessage("AIかどうかの判定のため、reCAPTCHA を先に完了してください。");
       return;
     }
 
