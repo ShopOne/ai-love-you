@@ -1,0 +1,14 @@
+{
+  "name": "ai-love-you",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @ai-love-you/web",
+    "build:web": "npm run build --workspace @ai-love-you/web",
+    "deploy:web": "npm run deploy --workspace @ai-love-you/web",
+    "dev:worker": "npm run dev --workspace @ai-love-you/worker",
+    "deploy:worker": "npm run deploy --workspace @ai-love-you/worker"
+  }
+}
