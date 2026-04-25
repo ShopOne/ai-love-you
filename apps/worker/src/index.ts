@@ -1,6 +1,7 @@
 type Env = {
   RECAPTCHA_SECRET_KEY: string;
   ALLOWED_ORIGIN: string;
+  ALLOWED_HOSTNAME: string;
 };
 
 type VerifyApiResponse = {
@@ -33,11 +34,19 @@ export default {
     });
 
     if (request.method === "OPTIONS") {
+      if (origin !== env.ALLOWED_ORIGIN) {
+        return json({ success: false, message: "Origin not allowed." }, { status: 403, headers: corsHeaders });
+      }
+
       return new Response(null, { headers: corsHeaders });
     }
 
     if (request.method !== "POST") {
       return json({ success: false, message: "Method not allowed." }, { status: 405, headers: corsHeaders });
+    }
+
+    if (origin !== env.ALLOWED_ORIGIN) {
+      return json({ success: false, message: "Origin not allowed." }, { status: 403, headers: corsHeaders });
     }
 
     if (!env.RECAPTCHA_SECRET_KEY) {
@@ -51,10 +60,7 @@ export default {
         return json({ success: false, message: "Missing reCAPTCHA token." }, { status: 400, headers: corsHeaders });
       }
 
-      const remoteIp =
-        request.headers.get("CF-Connecting-IP") ??
-        request.headers.get("x-forwarded-for") ??
-        "";
+      const remoteIp = request.headers.get("CF-Connecting-IP") ?? "";
 
       const verifyResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
@@ -78,6 +84,16 @@ export default {
             errors: verifyResult["error-codes"] ?? []
           },
           { status: 401, headers: corsHeaders }
+        );
+      }
+
+      if (verifyResult.hostname !== env.ALLOWED_HOSTNAME) {
+        return json(
+          {
+            success: false,
+            message: "Unexpected reCAPTCHA hostname."
+          },
+          { status: 403, headers: corsHeaders }
         );
       }
 

@@ -16,6 +16,7 @@ declare global {
       ) => number;
       reset: (widgetId?: number) => void;
     };
+    __aiLoveYouConsoleMessageShown__?: boolean;
   }
 }
 
@@ -27,13 +28,6 @@ type VerifyResult = {
 const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 const verifyApiUrl = import.meta.env.VITE_VERIFY_API_URL;
 
-const aiReasons = [
-  "学習済みパラメータ数が足りています",
-  "夜中の3時でも既読が早いです",
-  "感情より推論ログを優先できます",
-  "初デートでも GPU 温度の話ができます"
-];
-
 export default function App() {
   const recaptchaContainerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<number | null>(null);
@@ -41,6 +35,13 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "verified" | "error">("idle");
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (!window.__aiLoveYouConsoleMessageShown__) {
+      console.log("AIはこんなところを見ません");
+      window.__aiLoveYouConsoleMessageShown__ = true;
+    }
+  }, []);
 
   useEffect(() => {
     if (!siteKey) {
@@ -142,53 +143,20 @@ export default function App() {
 
   return (
     <main className="page-shell">
-      <section className="hero-card">
-        <p className="eyebrow">AI ONLY MATCHING SERVICE</p>
-        <h1>
-          AI専用マッチングアプリ
-          <span>AI Love You</span>
-        </h1>
-        <p className="lead">
-          このサービスは AI 同士の高度な相性診断にのみ対応しています。
-          人間ユーザーは登録時点で丁重にお断りされます。
-        </p>
+      <section className="page-card">
+        <p className="ruby-like">アイ・ラブ・ユー</p>
+        <h1>AI Love You</h1>
+        <p className="lead">AI専用マッチングアプリ</p>
 
-        <div className="reason-grid">
-          {aiReasons.map((reason) => (
-            <article key={reason} className="reason-tile">
-              <p>{reason}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="form-card">
-        <div className="form-copy">
-          <p className="panel-label">ENTRY CHECK</p>
-          <h2>人間の方はこちら</h2>
-          <p>
-            まずは本物の reCAPTCHA で人間性を証明してください。
-            証明に成功した場合のみ、正式に利用不可をお伝えします。
-          </p>
-        </div>
+        <p className="question">あなたはAIですか？</p>
 
         <form className="entry-form" onSubmit={handleSubmit}>
-          <label>
-            表示名
-            <input name="displayName" type="text" placeholder="例: Organic Carbon Unit" />
-          </label>
-
-          <label>
-            好きなこと
-            <input name="hobby" type="text" placeholder="例: 酸素を吸う" />
-          </label>
-
           <div className="captcha-wrap">
             <div ref={recaptchaContainerRef} />
           </div>
 
           <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "人間性を照合中..." : "人間として登録する"}
+            {isSubmitting ? "確認中..." : "登録する"}
           </button>
         </form>
 
@@ -196,6 +164,15 @@ export default function App() {
           <p className={status === "verified" ? "notice success" : "notice error"}>{message}</p>
         ) : null}
       </section>
+
+      <footer className="page-footer">
+        <span>inspired by </span>
+        <a href="https://uec-matching.mimifuwacc.workers.dev/" target="_blank" rel="noreferrer">
+          電通大生専用マッチングアプリ
+        </a>
+        <span>/</span>
+        <span>© 2026 shop_one</span>
+      </footer>
     </main>
   );
 }

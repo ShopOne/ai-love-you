@@ -3,4 +3,5 @@ main = "src/index.ts"
 compatibility_date = "2026-04-25"
 
 [vars]
-ALLOWED_ORIGIN = "https://ShopOne.github.io/ai-love-you"
+ALLOWED_ORIGIN = "https://shopone.github.io"
+ALLOWED_HOSTNAME = "shopone.github.io"
