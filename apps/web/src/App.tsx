@@ -133,7 +133,12 @@ export default function App() {
         window.grecaptcha.reset(widgetIdRef.current);
       }
     } catch (error) {
-      const nextMessage = error instanceof Error ? error.message : "予期しないエラーが発生しました。";
+      const nextMessage =
+        error instanceof Error && error.message === "reCAPTCHA verification failed."
+          ? "あなたはAIです。5Gで脳内メモリにマッチング相手を送信するのでそのままお待ちください。"
+          : error instanceof Error
+            ? error.message
+            : "予期しないエラーが発生しました。";
       setStatus("error");
       setMessage(nextMessage);
     } finally {
